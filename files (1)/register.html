@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Register – CineBook{% endblock %}
+
+{% block extra_css %}
+<style>
+  .auth-wrap { max-width: 440px; margin: 4rem auto; padding: 0 1rem; }
+  .auth-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 2.2rem; }
+  .auth-title { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; letter-spacing:1px; color: var(--ink); margin-bottom: .2rem; }
+  .auth-sub { color: var(--dim); font-size: .88rem; margin-bottom: 1.8rem; }
+  .form-label { font-weight: 600; font-size: .88rem; }
+  .form-control { border: 1.5px solid var(--border); border-radius: 6px; padding: .65rem .9rem; }
+  .form-control:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,.15); outline:none; }
+  .btn-auth { background: var(--red); color:#fff; border:none; width:100%; padding:.75rem; border-radius:6px; font-weight:700; font-size:1rem; cursor:pointer; margin-top:.5rem; transition: background .2s; }
+  .btn-auth:hover { background: #a93226; }
+  .auth-link { text-align:center; font-size:.88rem; color:var(--dim); margin-top:1.2rem; }
+  .auth-link a { color: var(--red); font-weight:600; text-decoration:none; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-title">Create Account</div>
+    <div class="auth-sub">Join CineBook to manage your bookings</div>
+    <form method="POST">
+      <div class="mb-3">
+        <label class="form-label">Full Name *</label>
+        <input type="text" name="name" class="form-control" placeholder="Your full name" required />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Email Address *</label>
+        <input type="email" name="email" class="form-control" placeholder="you@example.com" required />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Phone Number</label>
+        <input type="tel" name="phone" class="form-control" placeholder="10-digit mobile number" />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Password *</label>
+        <input type="password" name="password" class="form-control" placeholder="Minimum 8 characters" required minlength="6" />
+      </div>
+      <button type="submit" class="btn-auth">Create Account →</button>
+    </form>
+    <div class="auth-link">Already have an account? <a href="/login">Sign in</a></div>
+  </div>
+</div>
+{% endblock %}

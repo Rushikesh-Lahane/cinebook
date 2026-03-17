@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Book – {{ show.movie.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+  .booking-wrap { max-width: 560px; margin: 3rem auto; padding: 0 1rem; }
+  .summary-card { background: var(--ink); color: #fff; border-radius: 10px; padding: 1.5rem; margin-bottom: 1.5rem; }
+  .summary-card .movie-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--gold); letter-spacing:1px; }
+  .summary-row { display:flex; justify-content:space-between; font-size:.88rem; color:#ccc; margin-top:.4rem; }
+  .form-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 1.8rem; }
+  .form-label { font-weight: 600; font-size: .88rem; margin-bottom: .3rem; }
+  .form-control { border: 1.5px solid var(--border); border-radius: 6px; padding: .6rem .9rem; font-size: .95rem; }
+  .form-control:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,.15); outline:none; }
+  .seat-counter { display:flex; align-items:center; gap:.8rem; }
+  .seat-btn { width:36px; height:36px; border-radius:50%; border: 2px solid var(--ink); background: transparent; font-size:1.1rem; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; transition: all .15s; }
+  .seat-btn:hover { background: var(--ink); color:#fff; }
+  .seat-count { font-size:1.4rem; font-weight:700; width:2.5rem; text-align:center; }
+  .total-row { background: var(--paper); border-radius: 6px; padding: .8rem 1rem; display:flex; justify-content:space-between; align-items:center; margin-top:1rem; }
+  .total-label { font-size:.88rem; font-weight:600; color: var(--dim); }
+  .total-amount { font-size:1.4rem; font-weight:700; color: var(--ink); }
+  .btn-confirm { background: var(--red); color:#fff; border:none; width:100%; padding:.75rem; font-size:1rem; font-weight:700; border-radius:6px; cursor:pointer; margin-top:1rem; transition: background .2s; }
+  .btn-confirm:hover { background: #a93226; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="booking-wrap">
+  <a href="/movie/{{ show.movie.id }}" style="color:var(--dim);font-size:.85rem;text-decoration:none;"><i class="bi bi-arrow-left me-1"></i>Change Show</a>
+
+  <!-- Summary -->
+  <div class="summary-card mt-2">
+    <div class="movie-name">{{ show.movie.title }}</div>
+    <div class="summary-row"><span><i class="bi bi-calendar3 me-1"></i>{{ show.show_date }}</span><span><i class="bi bi-clock me-1"></i>{{ show.show_time }}</span></div>
+    <div class="summary-row"><span><i class="bi bi-display me-1"></i>{{ show.screen.name }}</span><span><i class="bi bi-ticket me-1"></i>₹ {{ "%.0f"|format(show.ticket_price) }} / seat</span></div>
+    <div class="summary-row mt-1"><span style="color:#aaa">Available: {{ show.available_seats }} seats</span></div>
+  </div>
+
+  <!-- Form -->
+  <div class="form-card">
+    <h5 style="font-weight:700;margin-bottom:1.2rem">Your Details</h5>
+    <form method="POST">
+      <div class="mb-3">
+        <label class="form-label">Full Name *</label>
+        <input type="text" name="name" class="form-control" placeholder="Enter your name" required />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Email Address</label>
+        <input type="email" name="email" class="form-control" placeholder="For e-ticket confirmation" />
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Number of Seats *</label>
+        <div class="seat-counter">
+          <button type="button" class="seat-btn" onclick="changeSeat(-1)">−</button>
+          <span class="seat-count" id="seatDisplay">1</span>
+          <button type="button" class="seat-btn" onclick="changeSeat(1)">+</button>
+          <input type="hidden" name="seats" id="seatsInput" value="1" />
+          <span style="font-size:.8rem;color:var(--dim)">(max 10)</span>
+        </div>
+      </div>
+      <div class="total-row">
+        <span class="total-label">TOTAL AMOUNT</span>
+        <span class="total-amount" id="totalDisplay">₹ {{ "%.0f"|format(show.ticket_price) }}</span>
+      </div>
+      <button type="submit" class="btn-confirm"><i class="bi bi-lock-fill me-2"></i>Confirm Booking</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const price = {{ show.ticket_price }};
+let seats = 1;
+function changeSeat(d) {
+  seats = Math.min(10, Math.max(1, seats + d));
+  document.getElementById('seatDisplay').textContent = seats;
+  document.getElementById('seatsInput').value = seats;
+  document.getElementById('totalDisplay').textContent = '₹ ' + (seats * price).toFixed(0);
+}
+</script>
+{% endblock %}

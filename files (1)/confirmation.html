@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Booking Confirmed – {{ booking.booking_ref }}{% endblock %}
+
+{% block extra_css %}
+<style>
+  .confirm-wrap { max-width: 580px; margin: 3rem auto; padding: 0 1rem; }
+  .success-banner { background: #1d6e3a; color: #fff; border-radius: 10px; padding: 2rem; text-align: center; margin-bottom: 1.5rem; }
+  .success-banner i { font-size: 3rem; display:block; margin-bottom: .5rem; }
+  .success-banner h2 { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing:1px; margin: 0 0 .3rem; }
+  .ref-badge { background: rgba(255,255,255,.2); border-radius: 6px; padding: .5rem 1.2rem; display:inline-block; font-size: 1.4rem; font-weight: 700; letter-spacing: 2px; margin-top: .5rem; }
+  .ticket-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .ticket-header { background: var(--ink); color: var(--gold); font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing:1px; padding: .8rem 1.4rem; }
+  .ticket-row { display: flex; justify-content: space-between; padding: .75rem 1.4rem; border-bottom: 1px solid var(--border); font-size: .9rem; }
+  .ticket-row:last-child { border-bottom: none; }
+  .ticket-label { color: var(--dim); font-weight: 600; }
+  .ticket-value { font-weight: 600; text-align: right; }
+  .total-highlight { background: var(--paper); font-size: 1rem; }
+  .total-highlight .ticket-value { color: var(--red); font-size: 1.2rem; }
+  .action-row { display: flex; gap: .8rem; margin-top: 1.4rem; }
+  .btn-home { flex:1; background: var(--ink); color:#fff; border:none; padding:.7rem; border-radius:6px; font-weight:700; cursor:pointer; text-align:center; text-decoration:none; font-size:.9rem; }
+  .btn-print { flex:1; background: transparent; color: var(--ink); border: 2px solid var(--ink); padding:.7rem; border-radius:6px; font-weight:700; cursor:pointer; text-align:center; font-size:.9rem; }
+  .btn-print:hover, .btn-home:hover { opacity:.85; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="confirm-wrap">
+  <div class="success-banner">
+    <i class="bi bi-check-circle-fill"></i>
+    <h2>Booking Confirmed!</h2>
+    <p style="margin:0;color:#a8e6be">Your tickets have been reserved.</p>
+    <div class="ref-badge">{{ booking.booking_ref }}</div>
+  </div>
+
+  <div class="ticket-card">
+    <div class="ticket-header"><i class="bi bi-ticket-perforated me-2"></i>E-Ticket</div>
+    <div class="ticket-row">
+      <span class="ticket-label">Movie</span>
+      <span class="ticket-value">{{ booking.show.movie.title }}</span>
+    </div>
+    <div class="ticket-row">
+      <span class="ticket-label">Date</span>
+      <span class="ticket-value">{{ booking.show.show_date }}</span>
+    </div>
+    <div class="ticket-row">
+      <span class="ticket-label">Show Time</span>
+      <span class="ticket-value">{{ booking.show.show_time }}</span>
+    </div>
+    <div class="ticket-row">
+      <span class="ticket-label">Screen</span>
+      <span class="ticket-value">{{ booking.show.screen.name }}</span>
+    </div>
+    <div class="ticket-row">
+      <span class="ticket-label">Seats Booked</span>
+      <span class="ticket-value">{{ booking.seats_booked }}</span>
+    </div>
+    <div class="ticket-row">
+      <span class="ticket-label">Name</span>
+      <span class="ticket-value">{{ booking.customer_name }}</span>
+    </div>
+    <div class="ticket-row">
+      <span class="ticket-label">Status</span>
+      <span class="ticket-value" style="color:#1d6e3a"><i class="bi bi-check-circle-fill me-1"></i>{{ booking.status | capitalize }}</span>
+    </div>
+    <div class="ticket-row total-highlight">
+      <span class="ticket-label">Total Paid</span>
+      <span class="ticket-value">₹ {{ "%.0f"|format(booking.total_amount) }}</span>
+    </div>
+  </div>
+
+  <div class="action-row">
+    <a href="/" class="btn-home"><i class="bi bi-house me-1"></i>Back to Home</a>
+    <button onclick="window.print()" class="btn-print"><i class="bi bi-printer me-1"></i>Print Ticket</button>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}{{ movie.title }} – CineBook{% endblock %}
+
+{% block extra_css %}
+<style>
+  .detail-hero { background: var(--ink); color: #fff; padding: 2.5rem 1.5rem; border-bottom: 3px solid var(--gold); }
+  .movie-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2rem,5vw,3.5rem); letter-spacing:1px; color:#fff; }
+  .meta-pill { background: rgba(255,255,255,.1); border-radius:30px; padding: .25rem .8rem; font-size: .8rem; color:#ccc; display:inline-flex; align-items:center; gap:.3rem; }
+  .desc { color: #bbb; font-size: .95rem; margin-top: 1rem; max-width: 600px; line-height: 1.7; }
+
+  .shows-section { padding: 2rem 1.5rem; }
+  .show-card { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 1.1rem 1.4rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-bottom: .8rem; transition: box-shadow .2s; }
+  .show-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.08); }
+  .show-time { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--ink); letter-spacing:1px; }
+  .show-screen { font-size: .82rem; color: var(--dim); margin-top: -.2rem; }
+  .show-price { font-weight: 700; font-size: 1.1rem; color: var(--ink); }
+  .show-seats { font-size: .82rem; color: var(--dim); }
+  .seats-low { color: var(--red); font-weight: 600; }
+  .btn-select { background: var(--red); color: #fff; border: none; padding: .5rem 1.4rem; border-radius: 4px; font-weight: 700; font-size: .88rem; cursor: pointer; transition: background .2s; white-space:nowrap; }
+  .btn-select:hover { background: #a93226; }
+  .btn-full { background: #ccc; color: #888; border: none; padding: .5rem 1.4rem; border-radius: 4px; font-weight: 700; font-size: .88rem; cursor: not-allowed; }
+  .no-shows { color: var(--dim); text-align:center; padding: 3rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="detail-hero">
+  <div class="container-fluid">
+    <a href="/" style="color:var(--gold);font-size:.85rem;text-decoration:none;"><i class="bi bi-arrow-left me-1"></i>Back to Movies</a>
+    <div class="movie-title mt-2">{{ movie.title }}</div>
+    <div class="d-flex flex-wrap gap-2 mt-2">
+      {% if movie.genre %}<span class="meta-pill"><i class="bi bi-tag"></i>{{ movie.genre.name }}</span>{% endif %}
+      {% if movie.rating %}<span class="meta-pill"><i class="bi bi-shield"></i>{{ movie.rating }}</span>{% endif %}
+      {% if movie.duration_minutes %}<span class="meta-pill"><i class="bi bi-clock"></i>{{ movie.duration_minutes }} min</span>{% endif %}
+      {% if movie.language %}<span class="meta-pill"><i class="bi bi-translate"></i>{{ movie.language }}</span>{% endif %}
+      {% if movie.director %}<span class="meta-pill"><i class="bi bi-camera-video"></i>{{ movie.director }}</span>{% endif %}
+    </div>
+    {% if movie.description %}<p class="desc">{{ movie.description }}</p>{% endif %}
+  </div>
+</div>
+
+<div class="shows-section">
+  <div class="container-fluid">
+    <h2 class="section-title mb-3">Today's Shows</h2>
+    {% if shows %}
+      {% for show in shows %}
+      <div class="show-card">
+        <div>
+          <div class="show-time">{{ show.show_time }}</div>
+          <div class="show-screen"><i class="bi bi-display me-1"></i>{{ show.screen.name }}</div>
+        </div>
+        <div>
+          <div class="show-price">₹ {{ "%.0f"|format(show.ticket_price) }} / seat</div>
+          <div class="show-seats {% if show.available_seats < 10 %}seats-low{% endif %}">
+            {% if show.available_seats == 0 %}
+              <i class="bi bi-x-circle me-1"></i>Housefull
+            {% elif show.available_seats < 10 %}
+              <i class="bi bi-exclamation-circle me-1"></i>Only {{ show.available_seats }} left!
+            {% else %}
+              <i class="bi bi-check-circle me-1"></i>{{ show.available_seats }} seats available
+            {% endif %}
+          </div>
+        </div>
+        {% if show.available_seats > 0 %}
+          <a href="/book/{{ show.id }}" class="btn-select">Select Seats →</a>
+        {% else %}
+          <button class="btn-full" disabled>Housefull</button>
+        {% endif %}
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="no-shows"><i class="bi bi-calendar-x" style="font-size:2.5rem;display:block;margin-bottom:.8rem"></i>No shows scheduled for today.</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

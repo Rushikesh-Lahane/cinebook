@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}CineBook – Now Showing{% endblock %}
+
+{% block extra_css %}
+<style>
+  .hero { background: var(--ink); color: #fff; padding: 3.5rem 1.5rem 3rem; border-bottom: 3px solid var(--gold); }
+  .hero h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.8rem, 6vw, 5rem); letter-spacing: 2px; line-height: 1; margin: 0; }
+  .hero h1 span { color: var(--gold); }
+  .hero p { color: #aaa; margin-top: .6rem; font-size: 1rem; }
+
+  .genre-bar { background: #fff; border-bottom: 1px solid var(--border); padding: .6rem 1.5rem; display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; }
+  .genre-btn { border: 1.5px solid var(--border); background: transparent; color: var(--dim); font-size: .82rem; font-weight: 600; border-radius: 30px; padding: .3rem .9rem; cursor: pointer; transition: all .2s; }
+  .genre-btn:hover, .genre-btn.active { background: var(--ink); border-color: var(--ink); color: #fff; }
+
+  .movies-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem; padding: 2rem 1.5rem; }
+
+  .movie-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; transition: transform .2s, box-shadow .2s; display: flex; flex-direction: column; }
+  .movie-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,.12); }
+
+  .poster-box { width: 100%; aspect-ratio: 2/3; overflow: hidden; background: #1a1a2e; position: relative; }
+  .poster-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .poster-fallback { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1rem; text-align: center; }
+  .poster-fallback .initials { font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; color: var(--gold); letter-spacing: 3px; line-height: 1; }
+  .poster-fallback .movie-name-fb { color: #aaa; font-size: .75rem; margin-top: .5rem; line-height: 1.3; }
+
+  .movie-card .info { padding: 1rem; flex: 1; display: flex; flex-direction: column; }
+  .movie-card .title { font-weight: 700; font-size: .95rem; margin-bottom: .4rem; line-height: 1.3; }
+  .movie-card .meta { font-size: .78rem; color: var(--dim); margin-bottom: auto; }
+  .movie-card .badges { display: flex; gap: .3rem; flex-wrap: wrap; margin: .6rem 0; }
+  .btn-book { background: var(--red); color: #fff; border: none; width: 100%; padding: .55rem; font-weight: 600; font-size: .88rem; border-radius: 4px; cursor: pointer; transition: background .2s; text-decoration: none; display: block; text-align: center; }
+  .btn-book:hover { background: #a93226; color: #fff; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="hero">
+  <div class="container-fluid">
+    <h1>NOW <span>SHOWING</span></h1>
+    <p><i class="bi bi-geo-alt-fill me-1"></i>Select a movie and grab your seats</p>
+  </div>
+</div>
+
+<div class="genre-bar">
+  <span style="font-size:.8rem;font-weight:700;color:var(--dim);margin-right:.3rem">FILTER:</span>
+  <button class="genre-btn active" onclick="filterGenre(this, 'all')">All</button>
+  {% for g in genres %}
+    <button class="genre-btn" onclick="filterGenre(this, '{{ g.name }}')">{{ g.name }}</button>
+  {% endfor %}
+</div>
+
+{% if movies %}
+<div class="movies-grid" id="moviesGrid">
+  {% for movie in movies %}
+  <div class="movie-card" data-genre="{{ movie.genre.name if movie.genre else 'Other' }}">
+
+    <div class="poster-box">
+      {% if movie.poster_url %}
+        <img src="{{ movie.poster_url }}"
+             alt="{{ movie.title }}"
+             loading="lazy"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+        <div class="poster-fallback" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%;">
+          <div class="initials">{{ movie.title[:2].upper() }}</div>
+          <div class="movie-name-fb">{{ movie.title }}</div>
+        </div>
+      {% else %}
+        <div class="poster-fallback">
+          <div class="initials">{{ movie.title[:2].upper() }}</div>
+          <div class="movie-name-fb">{{ movie.title }}</div>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="info">
+      <div class="title">{{ movie.title }}</div>
+      <div class="meta">
+        {% if movie.director %}<i class="bi bi-camera-video me-1"></i>{{ movie.director }}<br>{% endif %}
+        {% if movie.duration_minutes %}<i class="bi bi-clock me-1"></i>{{ movie.duration_minutes }} min &nbsp;{% endif %}
+        {% if movie.language %}<i class="bi bi-translate me-1"></i>{{ movie.language }}{% endif %}
+      </div>
+      <div class="badges">
+        {% if movie.genre %}<span class="badge-genre">{{ movie.genre.name }}</span>{% endif %}
+        {% if movie.rating %}<span class="badge-rating">{{ movie.rating }}</span>{% endif %}
+      </div>
+      <a href="/movie/{{ movie.id }}" class="btn-book">Book Tickets →</a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div style="text-align:center; padding:5rem 2rem; color:var(--dim);">
+  <i class="bi bi-camera-reels" style="font-size:3rem; display:block; margin-bottom:1rem"></i>
+  <p>No movies currently showing.</p>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function filterGenre(btn, genre) {
+  document.querySelectorAll('.genre-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.movie-card').forEach(card => {
+    card.style.display = (genre === 'all' || card.dataset.genre === genre) ? '' : 'none';
+  });
+}
+</script>
+{% endblock %}
