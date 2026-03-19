@@ -8,22 +8,34 @@
   .meta-pill { background: rgba(255,255,255,.1); border-radius:30px; padding: .25rem .8rem; font-size: .8rem; color:#ccc; display:inline-flex; align-items:center; gap:.3rem; }
   .desc { color: #bbb; font-size: .95rem; margin-top: 1rem; max-width: 600px; line-height: 1.7; }
 
+  /* Trailer */
+  .trailer-section { background: #0a0a0a; padding: 1.5rem; }
+  .trailer-label { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 2px; color: var(--gold); margin-bottom: 1rem; }
+  .trailer-thumb { position: relative; cursor: pointer; width: 100%; border-radius: 10px; overflow: hidden; background: #000; }
+  .trailer-thumb img { width: 100%; display: block; aspect-ratio: 16/9; object-fit: cover; }
+  .play-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 80px; height: 80px; background: rgba(192,57,43,0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #fff; box-shadow: 0 4px 30px rgba(0,0,0,.6); transition: all .2s; }
+  .trailer-thumb:hover .play-btn { transform: translate(-50%,-50%) scale(1.12); background: var(--red); }
+  .trailer-frame { display: none; width: 100%; aspect-ratio: 16/9; border-radius: 10px; overflow: hidden; background: #000; }
+  .trailer-frame iframe { width: 100%; height: 100%; border: none; display: block; }
+
+  /* Shows */
   .shows-section { padding: 2rem 1.5rem; }
   .show-card { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 1.1rem 1.4rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-bottom: .8rem; transition: box-shadow .2s; }
   .show-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.08); }
   .show-time { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--ink); letter-spacing:1px; }
   .show-screen { font-size: .82rem; color: var(--dim); margin-top: -.2rem; }
-  .show-price { font-weight: 700; font-size: 1.1rem; color: var(--ink); }
-  .show-seats { font-size: .82rem; color: var(--dim); }
-  .seats-low { color: var(--red); font-weight: 600; }
-  .btn-select { background: var(--red); color: #fff; border: none; padding: .5rem 1.4rem; border-radius: 4px; font-weight: 700; font-size: .88rem; cursor: pointer; transition: background .2s; white-space:nowrap; }
-  .btn-select:hover { background: #a93226; }
-  .btn-full { background: #ccc; color: #888; border: none; padding: .5rem 1.4rem; border-radius: 4px; font-weight: 700; font-size: .88rem; cursor: not-allowed; }
+  .show-price { font-weight: 700; font-size: 1.1rem; }
+  .seats-low { color: var(--red); font-weight: 600; font-size: .82rem; }
+  .seats-ok { color: #1d6e3a; font-size: .82rem; }
+  .btn-select { background: var(--red); color: #fff; border: none; padding: .55rem 1.4rem; border-radius: 4px; font-weight: 700; font-size: .88rem; cursor: pointer; text-decoration: none; display:inline-block; transition: background .2s; }
+  .btn-select:hover { background: #a93226; color:#fff; }
+  .btn-full { background: #ccc; color: #888; border: none; padding: .55rem 1.4rem; border-radius: 4px; font-weight: 700; font-size: .88rem; cursor: not-allowed; }
   .no-shows { color: var(--dim); text-align:center; padding: 3rem; }
 </style>
 {% endblock %}
 
 {% block content %}
+<!-- Hero -->
 <div class="detail-hero">
   <div class="container-fluid">
     <a href="/" style="color:var(--gold);font-size:.85rem;text-decoration:none;"><i class="bi bi-arrow-left me-1"></i>Back to Movies</a>
@@ -39,6 +51,30 @@
   </div>
 </div>
 
+<!-- Trailer — full width dark section -->
+{% if movie.trailer_url %}
+<div class="trailer-section">
+  <div class="trailer-label"><i class="bi bi-play-circle-fill me-2"></i>Official Trailer</div>
+
+  {% set yt_id = movie.trailer_url.split('/embed/')[1] %}
+
+  <!-- Thumbnail (click to play) -->
+  <div class="trailer-thumb" id="trailerThumb" onclick="playTrailer('{{ movie.trailer_url }}')">
+    <img src="https://img.youtube.com/vi/{{ yt_id }}/maxresdefault.jpg"
+         onerror="this.src='https://img.youtube.com/vi/{{ yt_id }}/hqdefault.jpg'"
+         alt="{{ movie.title }} trailer"/>
+    <div class="play-btn"><i class="bi bi-play-fill" style="margin-left:5px"></i></div>
+  </div>
+
+  <!-- Iframe (hidden until click) -->
+  <div class="trailer-frame" id="trailerFrame">
+    <iframe id="trailerIframe" src="" allowfullscreen
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+  </div>
+</div>
+{% endif %}
+
+<!-- Shows -->
 <div class="shows-section">
   <div class="container-fluid">
     <h2 class="section-title mb-3">Today's Shows</h2>
@@ -51,15 +87,13 @@
         </div>
         <div>
           <div class="show-price">₹ {{ "%.0f"|format(show.ticket_price) }} / seat</div>
-          <div class="show-seats {% if show.available_seats < 10 %}seats-low{% endif %}">
-            {% if show.available_seats == 0 %}
-              <i class="bi bi-x-circle me-1"></i>Housefull
-            {% elif show.available_seats < 10 %}
-              <i class="bi bi-exclamation-circle me-1"></i>Only {{ show.available_seats }} left!
-            {% else %}
-              <i class="bi bi-check-circle me-1"></i>{{ show.available_seats }} seats available
-            {% endif %}
-          </div>
+          {% if show.available_seats == 0 %}
+            <div class="seats-low"><i class="bi bi-x-circle me-1"></i>Housefull</div>
+          {% elif show.available_seats < 10 %}
+            <div class="seats-low"><i class="bi bi-exclamation-circle me-1"></i>Only {{ show.available_seats }} left!</div>
+          {% else %}
+            <div class="seats-ok"><i class="bi bi-check-circle me-1"></i>{{ show.available_seats }} seats available</div>
+          {% endif %}
         </div>
         {% if show.available_seats > 0 %}
           <a href="/book/{{ show.id }}" class="btn-select">Select Seats →</a>
@@ -69,8 +103,22 @@
       </div>
       {% endfor %}
     {% else %}
-      <div class="no-shows"><i class="bi bi-calendar-x" style="font-size:2.5rem;display:block;margin-bottom:.8rem"></i>No shows scheduled for today.</div>
+      <div class="no-shows">
+        <i class="bi bi-calendar-x" style="font-size:2.5rem;display:block;margin-bottom:.8rem"></i>
+        No shows scheduled for today.
+      </div>
     {% endif %}
   </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function playTrailer(url) {
+  document.getElementById('trailerThumb').style.display = 'none';
+  const frame = document.getElementById('trailerFrame');
+  document.getElementById('trailerIframe').src = url + '?autoplay=1&rel=0&modestbranding=1';
+  frame.style.display = 'block';
+}
+</script>
 {% endblock %}
