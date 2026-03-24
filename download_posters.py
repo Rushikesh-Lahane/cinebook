@@ -8,7 +8,7 @@ posters = {
     "oppenheimer.jpg":  "https://m.media-amazon.com/images/M/MV5BMDBmYTZjNjUtN2M1MS00MTQ2LTk2ODgtNzc2M2QyZGE5NTVjXkEyXkFqcGdeQXVyNzAwMjU2MTY@._V1_FMjpg_UX800_.jpg",
     "inception.jpg":    "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_FMjpg_UX800_.jpg",
     "interstellar.jpg": "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_FMjpg_UX800_.jpg",
-    "insideout2.jpg":   "https://m.media-amazon.com/images/M/MV5BYmU1ZGYzZGQtZjIxNS00ZmZlLWJhNTMtZTE4ZmZiMzNmMzZhXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_FMjpg_UX800_.jpg",
+    "insideout2.jpg":   "https://cdn.europosters.eu/image/1300/258585.jpg",
     "darkknight.jpg":   "https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_FMjpg_UX800_.jpg",
     "endgame.jpg":      "https://m.media-amazon.com/images/M/MV5BMTc5MDE2ODcwNV5BMl5BanBnXkFtZTgwMzI2NzQ2NzM@._V1_FMjpg_UX800_.jpg",
     "godfather.jpg":    "https://m.media-amazon.com/images/M/MV5BM2MyNjYxNmUtYTAwNi00MTYxLWJmNWYtYzZlODY3ZTk3OTFlXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_FMjpg_UX800_.jpg",

@@ -16,7 +16,10 @@ def generate_booking_ref():
 def seed_data():
     if Movie.query.first():
         return
-    genres = {g: Genre(name=g) for g in ['Action', 'Sci-Fi', 'Drama', 'Thriller', 'Comedy', 'Animation', 'Biography', 'Horror', 'Romance']}
+    genres = {g: Genre(name=g) for g in [
+        'Action', 'Sci-Fi', 'Drama', 'Thriller',
+        'Comedy', 'Animation', 'Biography', 'Horror', 'Romance'
+    ]}
     db.session.add_all(genres.values())
     db.session.flush()
 
@@ -35,12 +38,16 @@ def seed_data():
              release_date=date(2024,3,1), genre_id=genres['Sci-Fi'].id,
              poster_url='/static/posters/dune.jpg',
              trailer_url='https://www.youtube.com/embed/Way9Dexny3w'),
-        dict(title='Oppenheimer',
-             description='The story of J. Robert Oppenheimer and the invention of the atomic bomb.',
-             director='Christopher Nolan', duration_minutes=180, language='English', rating='U/A',
-             release_date=date(2023,7,21), genre_id=genres['Biography'].id,
-             poster_url='/static/posters/oppenheimer.jpg',
-             trailer_url='https://www.youtube.com/embed/uYPbbksJxIg'),
+        dict(title='Salaar',
+            description='Two friends become bitter enemies in a violent world of power and politics.',
+            director='Prashanth Neel',
+            duration_minutes=175,
+            language='Hindi',
+            rating='A',
+            release_date=date(2023, 12, 22),
+            genre_id=genres['Action'].id,
+            poster_url='https://filmfare.wwmindia.com/content/2023/sep/salaar21695982528.jpg',
+            trailer_url='https://www.youtube.com/embed/bUR_FKt7Iso'),
         dict(title='Inception',
              description='A thief who steals corporate secrets through dream-sharing technology.',
              director='Christopher Nolan', duration_minutes=148, language='English', rating='U/A',
@@ -53,18 +60,22 @@ def seed_data():
              release_date=date(2014,11,7), genre_id=genres['Sci-Fi'].id,
              poster_url='/static/posters/interstellar.jpg',
              trailer_url='https://www.youtube.com/embed/zSWdZVtXT7E'),
-        dict(title='The Lion King',
-             description='A young lion prince flees his kingdom only to learn the true meaning of responsibility and courage.',
-             director='Jon Favreau', duration_minutes=118, language='English', rating='U',
-             release_date=date(2019,7,19), genre_id=genres['Animation'].id,
-             poster_url='/static/posters/lionking.jpg',
-             trailer_url='https://www.youtube.com/embed/7TavVZMewpY'),
-        dict(title='The Dark Knight',
-             description='Batman faces the Joker, a criminal mastermind who wants to plunge Gotham into anarchy.',
-             director='Christopher Nolan', duration_minutes=152, language='English', rating='U/A',
-             release_date=date(2008,7,18), genre_id=genres['Action'].id,
-             poster_url='/static/posters/darkknight.jpg',
-             trailer_url='https://www.youtube.com/embed/EXeTwQWrcwY'),
+        dict(title='Inside Out 2',
+             description='Riley navigates the complexities of teenage emotions with new feelings joining the mix.',
+             director='Kelsey Mann', duration_minutes=100, language='English', rating='U',
+             release_date=date(2024,6,14), genre_id=genres['Animation'].id,
+             poster_url='https://lumiere-a.akamaihd.net/v1/images/p_insideout2_now_available_disneyplus_d24c051c.jpeg',
+             trailer_url='https://www.youtube.com/embed/LEjhY15eCx0'),
+        dict(title='Godzilla x Kong: The New Empire',
+            description='Godzilla and Kong unite to face a colossal undiscovered threat hidden within the Hollow Earth.',
+            director='Adam Wingard',
+            duration_minutes=115,
+            language='English',
+            rating='U/A',
+            release_date=date(2024, 3, 29),
+            genre_id=genres['Action'].id,
+            poster_url='https://cdn.kinocheck.com/i/l1spasjdvf.jpg',
+            trailer_url='https://www.youtube.com/embed/lV1OOlGwExM'),
         dict(title='Avengers: Endgame',
              description='The Avengers assemble once more to reverse the devastation caused by Thanos.',
              director='Anthony Russo', duration_minutes=181, language='English', rating='U/A',
@@ -83,18 +94,18 @@ def seed_data():
              release_date=date(2019,10,4), genre_id=genres['Thriller'].id,
              poster_url='/static/posters/joker.jpg',
              trailer_url='https://www.youtube.com/embed/zAGVQLHvwOY'),
-        dict(title='Top Gun: Maverick',
-            description='After 30 years, Maverick is still pushing the envelope as a top naval aviator.',
-            director='Joseph Kosinski', duration_minutes=130, language='English', rating='U/A',
-            release_date=date(2022,5,27), genre_id=genres['Action'].id,
-            poster_url='https://upload.wikimedia.org/wikipedia/en/1/13/Top_Gun_Maverick_Poster.jpg',
-            trailer_url='https://www.youtube.com/embed/giXco2jaZ_4'),
-        dict(title='One Piece Film: Red',
-            description='Uta, the most beloved singer in the world, makes her debut live performance. Her voice is said to be "otherworldly".',
-            director='Goro Taniguchi', duration_minutes=115, language='English/Japanese', rating='U/A',
-            release_date=date(2022,8,6), genre_id=genres['Animation'].id,
-            poster_url='https://upload.wikimedia.org/wikipedia/en/0/08/One_Piece_Film_Red_poster.png',
-            trailer_url='https://www.youtube.com/embed/oBiJaKMiP5U'),
+        dict(title='Snow White',
+            description='A live-action reimagining of the classic fairy tale where Snow White teams up with seven dwarfs to reclaim her kingdom from the Evil Queen.',
+            director='Marc Webb',
+            duration_minutes=109,
+            language='English',
+            rating='U/A',
+            release_date=date(2025, 3, 21),
+            genre_id=genres['Drama'].id,   
+            poster_url='https://i.redd.it/lq51fbddin4e1.jpeg',
+            trailer_url='https://www.youtube.com/embed/iV46TJKL8cU')
+            
+    
     ]
 
     movies = []
@@ -105,17 +116,36 @@ def seed_data():
     db.session.flush()
 
     today = date.today()
-    show_times = ['10:00 AM', '1:30 PM', '4:30 PM', '7:30 PM', '10:30 PM']
-    prices     = [180.0, 180.0, 220.0, 250.0, 250.0]
+
+    # Full day schedule with 2-hour gap between each show
+    # Show times covering entire day from morning to night
+    show_schedule = [
+        ('09:00 AM', 180.0, 0),   # Morning
+        ('11:30 AM', 180.0, 1),   # Late Morning
+        ('02:00 PM', 220.0, 2),   # Afternoon
+        ('04:30 PM', 220.0, 0),   # Evening
+        ('07:00 PM', 250.0, 1),   # Prime Time
+        ('09:30 PM', 250.0, 2),   # Night
+        ('11:59 PM', 200.0, 0),   # Late Night
+    ]
+
     for i, movie in enumerate(movies):
-        for j, (t, p) in enumerate(zip(show_times[:3], prices[:3])):
-            scr = screens[(i + j) % 3]
-            db.session.add(Show(movie_id=movie.id, screen_id=scr.id, show_date=today,
-                                show_time=t, ticket_price=p, available_seats=scr.total_seats))
+        for show_time, price, screen_idx in show_schedule:
+            scr = screens[(screen_idx + i) % 3]
+            db.session.add(Show(
+                movie_id=movie.id,
+                screen_id=scr.id,
+                show_date=today,
+                show_time=show_time,
+                ticket_price=price,
+                available_seats=scr.total_seats,
+            ))
 
     from werkzeug.security import generate_password_hash
-    db.session.add(User(name='Admin', email='admin@cinebook.com',
-                        password_hash=generate_password_hash('Admin@123'), is_admin=True))
+    db.session.add(User(
+        name='Admin', email='admin@cinebook.com',
+        password_hash=generate_password_hash('Admin@123'), is_admin=True
+    ))
     db.session.commit()
     print("[INFO] Sample data seeded successfully.")
 
@@ -153,9 +183,11 @@ def book(show_id):
             return redirect(url_for('book', show_id=show.id))
         total = seats * show.ticket_price
         ref   = generate_booking_ref()
-        db.session.add(Booking(booking_ref=ref, show_id=show.id, user_id=session.get('user_id'),
-                               customer_name=name, customer_email=email,
-                               seats_booked=seats, total_amount=total))
+        db.session.add(Booking(
+            booking_ref=ref, show_id=show.id, user_id=session.get('user_id'),
+            customer_name=name, customer_email=email,
+            seats_booked=seats, total_amount=total
+        ))
         show.available_seats -= seats
         db.session.commit()
         flash(f"Booking confirmed! Reference: {ref}", "success")
