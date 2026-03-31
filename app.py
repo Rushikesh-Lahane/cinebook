@@ -38,16 +38,12 @@ def seed_data():
              release_date=date(2024,3,1), genre_id=genres['Sci-Fi'].id,
              poster_url='/static/posters/dune.jpg',
              trailer_url='https://www.youtube.com/embed/Way9Dexny3w'),
-        dict(title='Salaar',
-            description='Two friends become bitter enemies in a violent world of power and politics.',
-            director='Prashanth Neel',
-            duration_minutes=175,
-            language='Hindi',
-            rating='A',
-            release_date=date(2023, 12, 22),
-            genre_id=genres['Action'].id,
-            poster_url='https://filmfare.wwmindia.com/content/2023/sep/salaar21695982528.jpg',
-            trailer_url='https://www.youtube.com/embed/bUR_FKt7Iso'),
+        dict(title='Oppenheimer',
+             description='The story of J. Robert Oppenheimer and the invention of the atomic bomb.',
+             director='Christopher Nolan', duration_minutes=180, language='English', rating='U/A',
+             release_date=date(2023,7,21), genre_id=genres['Biography'].id,
+             poster_url='/static/posters/oppenheimer.jpg',
+             trailer_url='https://www.youtube.com/embed/uYPbbksJxIg'),
         dict(title='Inception',
              description='A thief who steals corporate secrets through dream-sharing technology.',
              director='Christopher Nolan', duration_minutes=148, language='English', rating='U/A',
@@ -64,18 +60,14 @@ def seed_data():
              description='Riley navigates the complexities of teenage emotions with new feelings joining the mix.',
              director='Kelsey Mann', duration_minutes=100, language='English', rating='U',
              release_date=date(2024,6,14), genre_id=genres['Animation'].id,
-             poster_url='https://lumiere-a.akamaihd.net/v1/images/p_insideout2_now_available_disneyplus_d24c051c.jpeg',
+             poster_url='/static/posters/insideout2.jpg',
              trailer_url='https://www.youtube.com/embed/LEjhY15eCx0'),
-        dict(title='Godzilla x Kong: The New Empire',
-            description='Godzilla and Kong unite to face a colossal undiscovered threat hidden within the Hollow Earth.',
-            director='Adam Wingard',
-            duration_minutes=115,
-            language='English',
-            rating='U/A',
-            release_date=date(2024, 3, 29),
-            genre_id=genres['Action'].id,
-            poster_url='https://cdn.kinocheck.com/i/l1spasjdvf.jpg',
-            trailer_url='https://www.youtube.com/embed/lV1OOlGwExM'),
+        dict(title='The Dark Knight',
+             description='Batman faces the Joker, a criminal mastermind who wants to plunge Gotham into anarchy.',
+             director='Christopher Nolan', duration_minutes=152, language='English', rating='U/A',
+             release_date=date(2008,7,18), genre_id=genres['Action'].id,
+             poster_url='/static/posters/darkknight.jpg',
+             trailer_url='https://www.youtube.com/embed/EXeTwQWrcwY'),
         dict(title='Avengers: Endgame',
              description='The Avengers assemble once more to reverse the devastation caused by Thanos.',
              director='Anthony Russo', duration_minutes=181, language='English', rating='U/A',
@@ -94,18 +86,6 @@ def seed_data():
              release_date=date(2019,10,4), genre_id=genres['Thriller'].id,
              poster_url='/static/posters/joker.jpg',
              trailer_url='https://www.youtube.com/embed/zAGVQLHvwOY'),
-        dict(title='Snow White',
-            description='A live-action reimagining of the classic fairy tale where Snow White teams up with seven dwarfs to reclaim her kingdom from the Evil Queen.',
-            director='Marc Webb',
-            duration_minutes=109,
-            language='English',
-            rating='U/A',
-            release_date=date(2025, 3, 21),
-            genre_id=genres['Drama'].id,   
-            poster_url='https://i.redd.it/lq51fbddin4e1.jpeg',
-            trailer_url='https://www.youtube.com/embed/iV46TJKL8cU')
-            
-    
     ]
 
     movies = []
@@ -149,9 +129,36 @@ def seed_data():
     db.session.commit()
     print("[INFO] Sample data seeded successfully.")
 
+def generate_todays_shows():
+    today = date.today()
+    if Show.query.filter_by(show_date=today).first():
+        return
+    movies = Movie.query.filter_by(is_active=True).all()
+    screens = Screen.query.all()
+    if not movies or not screens:
+        return
+    show_schedule = [
+        ('09:00 AM', 180.0), ('11:30 AM', 180.0),
+        ('02:00 PM', 220.0), ('04:30 PM', 220.0),
+        ('07:00 PM', 250.0), ('09:30 PM', 250.0),
+        ('11:59 PM', 200.0),
+    ]
+    for i, movie in enumerate(movies):
+        for j, (show_time, price) in enumerate(show_schedule):
+            scr = screens[(i + j) % len(screens)]
+            db.session.add(Show(
+                movie_id=movie.id, screen_id=scr.id,
+                show_date=today, show_time=show_time,
+                ticket_price=price, available_seats=scr.total_seats,
+            ))
+    db.session.commit()
+    print(f"[INFO] Shows generated for {today}.")
+
+
 with app.app_context():
     db.create_all()
     seed_data()
+    generate_todays_shows()
 
 @app.route('/')
 def home():
